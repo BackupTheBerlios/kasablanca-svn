@@ -8,27 +8,45 @@ class FtpDirModel (QAbstractItemModel):
 	def __init__ (self):
 		QAbstractItemModel.__init__ (self)
 		self.list = list()
-		#self.list.append("hello")
-		#self.list.append("world")
 
 	def columnCount(self, parent = QModelIndex()):
-		return 1
-
-	def rowCount(self, index):
-		return len(self.list)
+		return 2
 
 	def index(self, row, column, parent = QModelIndex()):
-		self.createIndex(row, 0, 0)
+		return self.createIndex(row, column)
 
-	def parent(child):
+	def rowCount(self, index = QModelIndex()):
+		return len(self.list)
+
+	def parent(self, child):
 		return QModelIndex()
 
-	def data(index, role = Qt.DisplayRole):
-		if (index.isValid() == False):
+	def setData(self, index, value, role = Qt.DisplayRole):
+		
+		if index.row() == len(self.list):
+			self.list.append(value.toStringList())
+			self.emit(SIGNAL('layoutChanged()'))
+		else:
+			self.list[index.row()] = value.toStringList()
+			self.emit(SIGNAL('dataChanged(const QModelIndex &, const QModelIndex &)'), index, index)
+		return True
+
+	def data(self, index, role = Qt.DisplayRole):
+		if index.isValid() == False:
 			return QVariant()
-		if (index.row() >= len(self.list)):
+		elif index.row() >= len(self.list):
 			return QVariant()
-		if (role == Qt.DisplayRole):
-			return self.list[index]
+		elif role == Qt.DisplayRole:
+			return QVariant(self.list[index.row()][index.column()])
+		else:
+			return QVariant()
+
+	def headerData(self, section, orientation, role = Qt.DisplayRole):
+		if role != Qt.DisplayRole:
+			return QVariant()
+		if section == 0:
+			return QVariant("Name")
+		elif section == 1:
+			return QVariant("User")
 		else:
 			return QVariant()

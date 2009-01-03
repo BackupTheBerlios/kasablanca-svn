@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
  
 import sys
+import pickle
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs, KUrl
@@ -14,23 +15,59 @@ from ui_kasablancamainwindow import Ui_KasablancaMainWindow
 class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 
 	def __init__ (self):
+
 		KMainWindow.__init__ (self)
 		self.setupUi(self)
 		self.ftpModel = FtpDirModel()
-		self.treeView.setModel(self.ftpModel)
-		self.connect (self.pushButton, SIGNAL("clicked()"), self.slotClicked)
+		self.fileView.setModel(self.ftpModel)
+		self.connect(self.connectButton, SIGNAL("clicked()"), self.slotClicked)
+		self.connect(self.fileView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
+
+		kurl = KUrl()
+		kurl.setProtocol("ftps")
+		kurl.setUser(self.userEdit.text())
+		kurl.setPass(self.passEdit.text())
+		kurl.setHost(self.hostEdit.text())
+		self.kurl = kurl
+
+		print self.kurl
+
 	def slotClicked(self):
-		listjob = KIO.listDir(KUrl("ftps://glftpd:glftpd@localhost" ))
+
+		listjob = KIO.listDir(self.kurl, KIO.HideProgressInfo)
 		self.connect (listjob, SIGNAL("result (KJob *)"), self.slotResult)
 		self.connect (listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
 	def slotResult(self, job):
+
 		print "result"
-		print len(self.ftpModel.list)
+
 	def slotEntries(self, job, list):
+
+		print "entries"
+
+		self.ftpModel.list = []
+
 		for entry in list:
-			print entry.stringValue(KIO.UDSEntry.UDS_NAME)
-			self.ftpModel.list.append(entry)
-		self.ftpModel.emit(SIGNAL("const QModelIndex&, const QModelIndex&"))
+
+			name = entry.stringValue(KIO.UDSEntry.UDS_NAME)
+			user = entry.stringValue(KIO.UDSEntry.UDS_USER)
+			modelIndex = self.ftpModel.createIndex(self.ftpModel.rowCount(), 0)
+			self.ftpModel.setData(modelIndex, QVariant([name, user]))
+	
+	def slotDoubleClicked(self, index):
+
+		print "doubleClicked"
+
+		# attempt to change the dir
+
+		newkurl = KUrl(self.kurl)
+		newkurl.setPath(self.ftpModel.list[index.row()][0])
+
+		print newkurl
+	
+		listjob = KIO.listDir(newkurl, KIO.HideProgressInfo)
+		self.connect (listjob, SIGNAL("result (KJob *)"), self.slotResult)
+		self.connect (listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
 
 if __name__ == '__main__':
 
