@@ -1,1 +1,1 @@
-this is the development repository for a kde4 version of kasablanca written in python. as a backend it requires the kde4 kio-ftps slave, which is also in the kasablanca svn repo.
+this is the development repository for a kde4 version of kasablanca written in python. as a backend it requires the kde4 kio-ftps slave (svn rev >= 5), which is also in the kasablanca svn repo.

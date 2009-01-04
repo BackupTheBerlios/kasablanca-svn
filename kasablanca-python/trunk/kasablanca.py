@@ -30,13 +30,14 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		kurl.setHost(self.hostEdit.text())
 		self.kurl = kurl
 
-		print self.kurl
+		#customJob = KIO.get(self.kurl, KIO.Reload, KIO.HideProgressInfo)
+		#customJob.addMetaData("kasablanca-cmd", "test")
+		#self.connect(customJob, SIGNAL("data (KIO::Job *, const QByteArray &)"), self.slotData)
+		#self.connect(customJob, SIGNAL("result (KJob *)"), self.slotResult)
 
 	def slotClicked(self):
 
-		listjob = KIO.listDir(self.kurl, KIO.HideProgressInfo)
-		self.connect (listjob, SIGNAL("result (KJob *)"), self.slotResult)
-		self.connect (listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
+		self.listDir(self.kurl)
 	def slotResult(self, job):
 
 		print "result"
@@ -63,11 +64,26 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		newkurl = KUrl(self.kurl)
 		newkurl.setPath(self.ftpModel.list[index.row()][0])
 
-		print newkurl
+		#print newkurl
 	
-		listjob = KIO.listDir(newkurl, KIO.HideProgressInfo)
-		self.connect (listjob, SIGNAL("result (KJob *)"), self.slotResult)
-		self.connect (listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
+		self.listDir(newkurl)
+
+	def slotData(self, job, bytearray):
+
+		print bytearray
+
+	def slotInfoMessage(self, job, plain, rich):
+
+		self.logEdit.appendPlainText(plain)
+		#print plain
+
+	def listDir(self, kurl):
+		
+		listjob = KIO.listDir(kurl, KIO.HideProgressInfo)
+		listjob.addMetaData("kasablanca-logging", "true")
+		self.connect(listjob, SIGNAL("result (KJob *)"), self.slotResult)
+		self.connect(listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
+		self.connect(listjob, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
 
 if __name__ == '__main__':
 
