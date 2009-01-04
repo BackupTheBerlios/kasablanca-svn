@@ -1150,7 +1150,7 @@ bool Ftp::ftpCloseCommand()
 
 void Ftp::special( const QByteArray & bytearray ) 
 {
-// 	data(QByteArray());
+	ftpSendCmd(bytearray);
  	finished();
 }
 
