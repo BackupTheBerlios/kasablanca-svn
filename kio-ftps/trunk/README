@@ -1,4 +1,4 @@
-kio-ftps 0.2, Magnus Kulke 2008, licensed under GPL Version 2 or later.
+kio-ftps 0.3, Magnus Kulke 2008, licensed under GPL Version 2 or later.
 
 This kio slave implements the ftp encryption scheme called ftps, based on 
 rfc 4217. The slave tries to use all the encryption the server offers.
@@ -6,7 +6,7 @@ rfc 4217. The slave tries to use all the encryption the server offers.
 It currently supports: 
 
 - Control channel encryption.
-- Encrypted PASV data transfers.
+- Encrypted PASV & PORT data transfers.
 
 It still lacks: 
 

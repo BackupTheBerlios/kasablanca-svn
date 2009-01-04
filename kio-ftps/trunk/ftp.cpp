@@ -319,7 +319,7 @@ bool Ftp::ftpOpenConnection (LoginMode loginMode)
   kDebug(7102) << "ftpOpenConnection " << m_host << ":" << m_port << " "
                 << m_user << " [password hidden]";
 
-  infoMessage( i18n("Opening connection to host %1", m_host) );
+  if (metaData("kasablanca-logging") != "true") infoMessage( i18n("Opening connection to host %1", m_host) );
 
   if ( m_host.isEmpty() )
   {
@@ -337,7 +337,7 @@ bool Ftp::ftpOpenConnection (LoginMode loginMode)
 
   if (!ftpOpenControlConnection(host, port) )
     return false;          // error emitted by ftpOpenControlConnection
-  infoMessage( i18n("Connected to host %1", m_host) );
+  if (metaData("kasablanca-logging") != "true") infoMessage( i18n("Connected to host %1", m_host) );
 
   if(loginMode != loginDefered)
   {
@@ -423,26 +423,28 @@ bool Ftp::ftpOpenControlConnection( const QString &host, int port, bool ignoreSs
       // again, with the "ignoreSslErrors" flag.
 
       bool doNotIgnore = false;
+	  QString errorString;
 
       QList<QSslError> errors = m_control->sslErrors();
-
+		
       for (int i = 0; i < errors.size(); ++i) 
       {
-	if (messageBox(WarningContinueCancel, errors.at(i).errorString(), 
-	"TLS Handshake Error", 
-	i18n("&Continue"), 
-	i18n("&Cancel")) == KMessageBox::Cancel) doNotIgnore = false; 	
+		errorString = errors.at(i).errorString();
+		if ((!doNotIgnore) && (messageBox(WarningContinueCancel, errorString, 
+		"TLS Handshake Error", 
+		i18n("&Continue"), 
+		i18n("&Cancel")) == KMessageBox::Cancel)) doNotIgnore = true; 	
       }
 
       if (doNotIgnore) 
       {
-	iErrorCode = ERR_SLAVE_DEFINED;
-	sErrorMsg = i18n("TLS Handshake Error.");
+		iErrorCode = ERR_SLAVE_DEFINED;
+		sErrorMsg = errorString;
       }
       else
       {
-	closeConnection();
-	return ftpOpenControlConnection(host, port, true);
+		closeConnection();
+		return ftpOpenControlConnection(host, port, true);
       }
     }
   }
@@ -464,7 +466,7 @@ bool Ftp::ftpOpenControlConnection( const QString &host, int port, bool ignoreSs
  */
 bool Ftp::ftpLogin()
 {
-  infoMessage( i18n("Sending login information") );
+  if (metaData("kasablanca-logging") != "true") infoMessage( i18n("Sending login information") );
 
   assert( !m_bLoggedOn );
 
@@ -586,7 +588,7 @@ bool Ftp::ftpLogin()
 
 
   kDebug(7102) << "Login OK";
-  infoMessage( i18n("Login OK") );
+  if (metaData("kasablanca-logging") != "true") infoMessage( i18n("Login OK") );
 
   // Okay, we're logged in. If this is IIS 4, switch dir listing style to Unix:
   // Thanks to jk@soegaard.net (Jens Kristian Sgaard) for this hint
@@ -676,6 +678,8 @@ bool Ftp::ftpSendCmd( const QByteArray& cmd, int maxretries )
 {
   assert(m_control != NULL);    // must have control connection socket
 
+  if (metaData("kasablanca-logging") == "true") infoMessage("> " + cmd); 
+
   if ( cmd.indexOf( '\r' ) != -1 || cmd.indexOf( '\n' ) != -1)
   {
     kWarning(7102) << "Invalid command received (contains CR or LF):"
@@ -687,7 +691,7 @@ bool Ftp::ftpSendCmd( const QByteArray& cmd, int maxretries )
   // Don't print out the password...
   bool isPassCmd = (cmd.left(4).toLower() == "pass");
   if ( !isPassCmd )
-    kDebug(7102) << "send> " << cmd.data();
+     kDebug(7102) << "send> " << cmd.data();
   else
     kDebug(7102) << "send> pass [protected]";
 
@@ -700,8 +704,11 @@ bool Ftp::ftpSendCmd( const QByteArray& cmd, int maxretries )
   // If we were able to successfully send the command, then we will
   // attempt to read the response. Otherwise, take action to re-attempt
   // the login based on the maximum number of retires specified...
-  if( num > 0 )
-    ftpResponse(-1);
+  if( num > 0 ) 
+  {
+	QString resp = ftpResponse(-1);
+	if (metaData("kasablanca-logging") == "true") infoMessage("< " + resp.trimmed());
+  }
   else
   {
     m_iRespType = m_iRespCode = 0;
@@ -763,7 +770,7 @@ bool Ftp::ftpSendCmd( const QByteArray& cmd, int maxretries )
 
   // good for logging!
 
-   //message(cmd);
+  //message(cmd);
 
   return true;
 }
@@ -1139,6 +1146,12 @@ bool Ftp::ftpCloseCommand()
     return false;
   }
   return true;
+}
+
+void Ftp::special( const QByteArray & bytearray ) 
+{
+// 	data(QByteArray());
+ 	finished();
 }
 
 void Ftp::mkdir( const KUrl & url, int permissions )
@@ -1831,6 +1844,7 @@ bool Ftp::ftpReadDir(FtpEntry& de)
 void Ftp::get( const KUrl & url )
 {
   kDebug(7102) << "Ftp::get " << url.url();
+
   int iError = 0;
   ftpGet(iError, -1, url, 0);               // iError gets status
   if(iError)                                // can have only server side errs

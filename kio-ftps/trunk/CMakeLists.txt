@@ -4,9 +4,9 @@ find_package(KDE4 REQUIRED)
 
 include_directories( ${KDE4_INCLUDES} )
 
-set(mySources ftp.cpp)
+set(SRCS_KIO-FTPS ftp.cpp)
 
-kde4_add_plugin( kio_ftps ${mySources} )
+kde4_add_plugin( kio_ftps ${SRCS_KIO-FTPS} )
 
 target_link_libraries(kio_ftps ${KDE4_KDECORE_LIBS} kio )
 

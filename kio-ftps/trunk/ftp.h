@@ -84,6 +84,8 @@ public:
   virtual void put( const KUrl& url, int permissions, KIO::JobFlags flags );
   //virtual void mimetype( const KUrl& url );
 
+  virtual void special( const QByteArray & data );
+
   virtual void slave_status();
 
   /**
