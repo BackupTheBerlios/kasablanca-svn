@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
- 
-import sys
-import pickle
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs, KUrl
-from PyKDE4.kdeui import KApplication, KMainWindow
-from PyKDE4.kio import *
 
-from ftpdirmodel import FtpDirModel
+import sys
+
+from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs
+from PyKDE4.kdeui import KApplication, KMainWindow
+
+from guisession import GuiSession
 from ui_kasablancamainwindow import Ui_KasablancaMainWindow
 
 class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
@@ -18,72 +15,10 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 
 		KMainWindow.__init__ (self)
 		self.setupUi(self)
-		self.ftpModel = FtpDirModel()
-		self.fileView.setModel(self.ftpModel)
-		self.connect(self.connectButton, SIGNAL("clicked()"), self.slotClicked)
-		self.connect(self.fileView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
 
-		kurl = KUrl()
-		kurl.setProtocol("ftps")
-		kurl.setUser(self.userEdit.text())
-		kurl.setPass(self.passEdit.text())
-		kurl.setHost(self.hostEdit.text())
-		self.kurl = kurl
+		self.guiSession = GuiSession(self.fileView, self.connectButton, self.siteButton, self.hostEdit, self.userEdit, self.passEdit, self.logEdit, self.tlsCheck)
 
-		#customJob = KIO.get(self.kurl, KIO.Reload, KIO.HideProgressInfo)
-		#customJob.addMetaData("kasablanca-cmd", "test")
-		#self.connect(customJob, SIGNAL("data (KIO::Job *, const QByteArray &)"), self.slotData)
-		#self.connect(customJob, SIGNAL("result (KJob *)"), self.slotResult)
-
-	def slotClicked(self):
-
-		self.listDir(self.kurl)
-	def slotResult(self, job):
-
-		print "result"
-
-	def slotEntries(self, job, list):
-
-		print "entries"
-
-		self.ftpModel.list = []
-
-		for entry in list:
-
-			name = entry.stringValue(KIO.UDSEntry.UDS_NAME)
-			user = entry.stringValue(KIO.UDSEntry.UDS_USER)
-			modelIndex = self.ftpModel.createIndex(self.ftpModel.rowCount(), 0)
-			self.ftpModel.setData(modelIndex, QVariant([name, user]))
-	
-	def slotDoubleClicked(self, index):
-
-		print "doubleClicked"
-
-		# attempt to change the dir
-
-		newkurl = KUrl(self.kurl)
-		newkurl.setPath(self.ftpModel.list[index.row()][0])
-
-		#print newkurl
-	
-		self.listDir(newkurl)
-
-	def slotData(self, job, bytearray):
-
-		print bytearray
-
-	def slotInfoMessage(self, job, plain, rich):
-
-		self.logEdit.appendPlainText(plain)
-		#print plain
-
-	def listDir(self, kurl):
-		
-		listjob = KIO.listDir(kurl, KIO.HideProgressInfo)
-		listjob.addMetaData("kasablanca-logging", "true")
-		self.connect(listjob, SIGNAL("result (KJob *)"), self.slotResult)
-		self.connect(listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
-		self.connect(listjob, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
+		self.guiSession_2 = GuiSession(self.fileView_2, self.connectButton_2, self.siteButton_2, self.hostEdit_2, self.userEdit_2, self.passEdit_2, self.logEdit_2, self.tlsCheck_2)
 
 if __name__ == '__main__':
 
