@@ -392,22 +392,23 @@ bool Ftp::ftpOpenControlConnection( const QString &host, int port, bool ignoreSs
     sErrorMsg = QString("%1: %2").arg(host).arg(m_control->errorString());
   }
 
-  // Send unencrypted "AUTH TLS" request.
-  // TODO: redirect to FTP fallback on negative response.
+  // Send unencrypted "AUTH TLS" request. 
+  // If kasablanca explicitely says "no TLS", then continue with unencrypted session.
+  // Default ftps kio will fail, when auth tls is not supported.
 
-  if(iErrorCode == 0) 
+  if ((metaData("kasablanca-tls") != "false") && (iErrorCode == 0))
   {
     bool authSucc = (ftpSendCmd("AUTH TLS") && (m_iRespCode == 234));
     if (!authSucc)
     {
       iErrorCode = ERR_SLAVE_DEFINED;
-      sErrorMsg = i18n("The FTP server does not seem to support ftps-encryption.");
+      sErrorMsg = i18n("The FTP server does not seem to support TLS encryption.");
     }
   }
 
   // Starts the encryption
 
-  if(iErrorCode == 0) 
+  if ((iErrorCode == 0) && (metaData("kasablanca-tls") != "false")) 
   {
     // If the method has been called with ignoreSslErrors, make the ssl socket
     // ignore the errors during handshakes. 
@@ -583,7 +584,6 @@ bool Ftp::ftpLogin()
         cacheAuthentication( info );
       failedAuth = -1;
     }
-
   } while( ++failedAuth );
 
 
@@ -874,8 +874,6 @@ int Ftp::ftpOpenEPSVDataConnection()
   return m_data->isOpen() ? 0 : ERR_INTERNAL;
 }
 
-// TODO: this is only for the PASV channel.
-
 int Ftp::encryptDataChannel()
 {	
 	if (m_bIgnoreSslErrors) m_data->ignoreSslErrors();
@@ -1046,7 +1044,15 @@ int Ftp::ftpOpenPortDataConnection()
 bool Ftp::ftpOpenCommand( const char *_command, const QString & _path, char _mode,
                           int errorcode, KIO::fileoffset_t _offset )
 {
-  bool useDataEnc = requestDataEncryption();
+  // kasablanca should insist on encrypted connections. default kio-ftps should use data encryption when possible.
+
+  bool useDataEnc = false;
+  if (metaData("kasablanca-tls-data") != "false") useDataEnc = requestDataEncryption();
+  if ((metaData("kasablanca-tls-data") == "true") && (!useDataEnc))
+  {
+	error(ERR_SLAVE_DEFINED, "The FTP server does not seem to support TLS encryption for data transfer.");
+	return false;
+  }
 
   int errCode = 0;
   if( !ftpDataMode(_mode) )

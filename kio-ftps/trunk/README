@@ -2,6 +2,8 @@ kio-ftps 0.3, Magnus Kulke 2008, licensed under GPL Version 2 or later.
 
 This kio slave implements the ftp encryption scheme called ftps, based on 
 rfc 4217. The slave tries to use all the encryption the server offers.
+This kio slave is used by kasablanca, but you can it in other kde apps
+like konqueror and dolphin too.  
 
 It currently supports: 
 
@@ -11,3 +13,5 @@ It currently supports:
 It still lacks: 
 
 - Authentification via client certificate.
+
+
