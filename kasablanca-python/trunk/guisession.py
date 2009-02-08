@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pickle
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyKDE4.kdeui import KMessageBox
@@ -47,19 +46,9 @@ class GuiSession (QObject):
 		
 		self.attemptKurl = kurl
 
-		print self.attemptKurl
+		# print self.attemptKurl
 
 		self.listDir(self.attemptKurl)
-
-	def slotSiteClicked(self):
-		
-		if self.kurl == "":
-			return
-
-		specialJob = KIO.special(self.kurl, "PWD", KIO.HideProgressInfo)
-		specialJob.addMetaData("kasablanca-logging", "true")
-		self.connect(specialJob, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
-		self.connect(specialJob, SIGNAL("result (KJob *)"), self.slotResult)
 
 	def slotResult(self, job):
 
@@ -67,18 +56,28 @@ class GuiSession (QObject):
 		if job.error():
 			KMessageBox.sorry(None, job.errorString())
 
-	def slotEntries(self, job, list):
+		self.enableGui(True)
+
+	def slotEntries(self, job, entries):
 
 		print "entries"
 
 		self.ftpModel.list = []
 
-		for entry in list:
+		for entry in entries:
 
-			name = entry.stringValue(KIO.UDSEntry.UDS_NAME)
-			user = entry.stringValue(KIO.UDSEntry.UDS_USER)
+			variantList = [
+				entry.stringValue(KIO.UDSEntry.UDS_NAME),
+				entry.stringValue(KIO.UDSEntry.UDS_USER),
+				entry.stringValue(KIO.UDSEntry.UDS_GROUP),
+				entry.numberValue(KIO.UDSEntry.UDS_SIZE),
+				entry.isDir(),
+				entry.isLink()
+			]
+
 			modelIndex = self.ftpModel.createIndex(self.ftpModel.rowCount(), 0)
-			self.ftpModel.setData(modelIndex, QVariant([name, user]))
+
+			self.ftpModel.setData(modelIndex, QVariant(variantList))
 
 		self.kurl = self.attemptKurl;
 	
@@ -86,15 +85,34 @@ class GuiSession (QObject):
 
 		print "doubleClicked"
 
-		# attempt to change the dir
+		fileName = self.ftpModel.getField(index.row(), FtpDirModel.FILENAME)
 
-		self.attemptKurl = KUrl(self.kurl)
-		self.attemptKurl.addPath(self.ftpModel.list[index.row()][0])
-		self.attemptKurl.cleanPath()
+		if self.ftpModel.getField(index.row(), FtpDirModel.DIRECTORY) == True:
 
-		print self.attemptKurl
+			# attempt to change the dir
+
+			self.attemptKurl = KUrl(self.kurl)
+			self.attemptKurl.addPath(fileName)
+			self.attemptKurl.cleanPath()
+
+			# print self.attemptKurl
 	
-		self.listDir(self.attemptKurl)
+			self.listDir(self.attemptKurl)
+		else:
+			filePath = KFileDialog.getSaveFileName(KUrl(QDir.homePath() + "/" + fileName))
+
+			if filePath != "":
+				srcKurl = KUrl(self.kurl)
+				srcKurl.addPath(fileName)
+				self.copyFile(srcKurl, KUrl(filePath))
+
+	def slotSiteClicked(self):
+		
+		if self.kurl == "":
+			return
+
+		specialJob = KIO.special(self.kurl, "SITE HELP", KIO.HideProgressInfo)
+		self.doJobDefaults(specialJob)
 
 	def slotData(self, job, bytearray):
 
@@ -105,16 +123,43 @@ class GuiSession (QObject):
 		self.logEdit.appendPlainText(plain)
 		#print plain
 
+	def slotPercent(self, job, percent):
+
+		print percent
+
+	def enableGui(self, enable):
+
+		self.fileView.setEnabled(enable)
+		self.connectButton.setEnabled(enable)
+		self.siteButton.setEnabled(enable)
+		self.hostEdit.setEnabled(enable)
+		self.userEdit.setEnabled(enable)
+		self.passEdit.setEnabled(enable)
+		self.logEdit.setEnabled(enable)
+		self.tlsCheck.setEnabled(enable)
+
+	def doJobDefaults(self, job):
+		
+		job.addMetaData("kasablanca-logging", "true")
+		if self.tlsCheck.isChecked():
+			job.addMetaData("kasablanca-tls", "true")
+			job.addMetaData("kasablanca-tls-data", "true")
+		else:
+			job.addMetaData("kasablanca-tls", "false")
+			job.addMetaData("kasablanca-tls-data", "false")
+		self.connect(job, SIGNAL("result (KJob *)"), self.slotResult)
+		self.connect(job, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
+		self.connect(job, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)  
+
+		self.enableGui(False)
+
+	def copyFile(self, srcKurl, dstKurl):
+		
+		copyJob = KIO.copy(srcKurl, dstKurl, KIO.HideProgressInfo)
+		self.doJobDefaults(copyJob)
+
 	def listDir(self, kurl):
 
-		listjob = KIO.listDir(kurl, KIO.HideProgressInfo)
-		listjob.addMetaData("kasablanca-logging", "true")
-		if self.tlsCheck.isChecked():
-			listjob.addMetaData("kasablanca-tls", "true")
-			listjob.addMetaData("kasablanca-tls-data", "true")
-		else:
-			listjob.addMetaData("kasablanca-tls", "false")
-			listjob.addMetaData("kasablanca-tls-data", "false")
-		self.connect(listjob, SIGNAL("result (KJob *)"), self.slotResult)
-		self.connect(listjob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
-		self.connect(listjob, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
+		listJob = KIO.listDir(kurl, KIO.HideProgressInfo)
+		self.doJobDefaults(listJob)
+		self.connect(listJob, SIGNAL("entries (KIO::Job *, const KIO::UDSEntryList&)"), self.slotEntries)
