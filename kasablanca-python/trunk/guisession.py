@@ -30,9 +30,8 @@ class GuiSession (QObject):
 
 		self.connect(self.connectButton, SIGNAL("clicked()"), self.slotClicked)
 		self.connect(self.fileView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
-
 		self.connect(self.siteButton, SIGNAL("clicked()"), self.slotSiteClicked)
-
+		
 		self.kurl = KUrl()
 
 	def slotClicked(self):

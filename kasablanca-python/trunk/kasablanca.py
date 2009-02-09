@@ -20,12 +20,6 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 
 		self.guiSession_2 = GuiSession(self.frame_2, self.fileView_2, self.connectButton_2, self.siteButton_2, self.hostEdit_2, self.userEdit_2, self.passEdit_2, self.logEdit_2, self.tlsCheck_2)
 
-		#scene = QGraphicsScene()
-		#scene.addText("Hello, world!")
-		#view = QGraphicsView(scene)
-		#self.gridLayout.addWidget(view)
-		#view.show()
-
 if __name__ == '__main__':
 
 	appName     = "kasablanca"

@@ -15,8 +15,17 @@ class ProgressWidget (QSvgWidget):
 		self.globalOpacity = 0.0
 		self.containerOpacity = 0.5
 		self.load(QByteArray(self.xmlString()))
-		self.move(60, 120)
-		self.setFixedSize(300, 170)
+
+		self.connect(frame, SIGNAL("sizeChanged(int, int)"), self.slotSizeChanged)
+		self.center(frame.width(), frame.height())
+
+	def center(self, width, height):
+		
+		self.setGeometry((width*20)/100, (height*32)/100, (width*60)/100, (height*30)/100)
+
+	def slotSizeChanged(self, width, height):
+	
+		self.center(width, height)
 
 	def setPercent(self, percent):
 		

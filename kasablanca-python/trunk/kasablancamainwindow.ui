@@ -1,4 +1,5 @@
 <ui version="4.0" >
+ <author>Magnus Kulke</author>
  <class>KasablancaMainWindow</class>
  <widget class="QMainWindow" name="KasablancaMainWindow" >
   <property name="geometry" >
@@ -15,7 +16,7 @@
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" name="gridLayout_3" >
     <item row="0" column="0" >
-     <widget class="QFrame" name="frame" >
+     <widget class="SessionFrame" name="frame" >
       <property name="enabled" >
        <bool>true</bool>
       </property>
@@ -32,10 +33,30 @@
        <property name="margin" >
         <number>0</number>
        </property>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label" >
+       <item row="2" column="0" colspan="9" >
+        <widget class="QPlainTextEdit" name="logEdit" >
+         <property name="textInteractionFlags" >
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="6" colspan="3" >
+        <widget class="QPushButton" name="siteButton" >
          <property name="text" >
-          <string>Host:</string>
+          <string>SITE HELP</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="8" >
+        <widget class="QCheckBox" name="tlsCheck" >
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+         <property name="tristate" >
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -60,10 +81,10 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="4" >
-        <widget class="QLabel" name="label_3" >
+       <item row="1" column="0" >
+        <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>Pass:</string>
+          <string>Host:</string>
          </property>
         </widget>
        </item>
@@ -77,13 +98,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="6" >
-        <widget class="QPushButton" name="connectButton" >
-         <property name="text" >
-          <string>Connect</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="7" >
         <widget class="QLabel" name="label_7" >
          <property name="text" >
@@ -91,30 +105,17 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="8" >
-        <widget class="QCheckBox" name="tlsCheck" >
+       <item row="1" column="4" >
+        <widget class="QLabel" name="label_3" >
          <property name="text" >
-          <string/>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-         <property name="tristate" >
-          <bool>false</bool>
+          <string>Pass:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="9" >
-        <widget class="QPlainTextEdit" name="logEdit" >
-         <property name="textInteractionFlags" >
-          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="6" colspan="3" >
-        <widget class="QPushButton" name="siteButton" >
+       <item row="1" column="6" >
+        <widget class="QPushButton" name="connectButton" >
          <property name="text" >
-          <string>SITE HELP</string>
+          <string>Connect</string>
          </property>
         </widget>
        </item>
@@ -132,22 +133,10 @@
         </widget>
        </item>
       </layout>
-      <zorder>logEdit</zorder>
-      <zorder>siteButton</zorder>
-      <zorder>tlsCheck</zorder>
-      <zorder>hostEdit</zorder>
-      <zorder>label_2</zorder>
-      <zorder>userEdit</zorder>
-      <zorder>label</zorder>
-      <zorder>passEdit</zorder>
-      <zorder>label_7</zorder>
-      <zorder>label_3</zorder>
-      <zorder>connectButton</zorder>
-      <zorder>fileView</zorder>
      </widget>
     </item>
     <item row="0" column="1" >
-     <widget class="QFrame" name="frame_2" >
+     <widget class="SessionFrame" name="frame_2" >
       <property name="frameShape" >
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -267,6 +256,17 @@
   </widget>
   <widget class="QStatusBar" name="statusbar" />
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SessionFrame</class>
+   <extends>QFrame</extends>
+   <header>sessionframe.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <includes>
+  <include location="local" >testframe.py</include>
+ </includes>
  <resources/>
  <connections/>
 </ui>
