@@ -3,14 +3,18 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtSvg import *
 from PyKDE4.kdeui import KMessageBox
 from PyKDE4.kdecore import KUrl
 from PyKDE4.kio import *
+
+from progresswidget import ProgressWidget
 from ftpdirmodel import FtpDirModel
 
 class GuiSession (QObject):
 
-	def __init__ (self, fileView, connectButton, siteButton, hostEdit, userEdit, passEdit, logEdit, tlsCheck):
+	def __init__ (self, frame, fileView, connectButton, siteButton, hostEdit, userEdit, passEdit, logEdit, tlsCheck):
+		self.frame = frame
 		self.fileView = fileView
 		self.connectButton = connectButton
 		self.siteButton = siteButton
@@ -36,6 +40,9 @@ class GuiSession (QObject):
 
 		self.kurl = KUrl()
 
+		self.progressWidget = ProgressWidget(frame)
+		self.progressWidget.hide()
+	
 	def slotClicked(self):
 
 		kurl = KUrl()
@@ -56,7 +63,8 @@ class GuiSession (QObject):
 		if job.error():
 			KMessageBox.sorry(None, job.errorString())
 
-		self.enableGui(True)
+		self.progressWidget.hide()
+		self.frame.setEnabled(True)
 
 	def slotEntries(self, job, entries):
 
@@ -125,18 +133,7 @@ class GuiSession (QObject):
 
 	def slotPercent(self, job, percent):
 
-		print percent
-
-	def enableGui(self, enable):
-
-		self.fileView.setEnabled(enable)
-		self.connectButton.setEnabled(enable)
-		self.siteButton.setEnabled(enable)
-		self.hostEdit.setEnabled(enable)
-		self.userEdit.setEnabled(enable)
-		self.passEdit.setEnabled(enable)
-		self.logEdit.setEnabled(enable)
-		self.tlsCheck.setEnabled(enable)
+		self.progressWidget.setPercent(percent)
 
 	def doJobDefaults(self, job):
 		
@@ -151,12 +148,14 @@ class GuiSession (QObject):
 		self.connect(job, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
 		self.connect(job, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)  
 
-		self.enableGui(False)
+		self.frame.setEnabled(False)
 
 	def copyFile(self, srcKurl, dstKurl):
 		
 		copyJob = KIO.copy(srcKurl, dstKurl, KIO.HideProgressInfo)
 		self.doJobDefaults(copyJob)
+		self.progressWidget.setPercent(0)
+		self.progressWidget.show()
 
 	def listDir(self, kurl):
 

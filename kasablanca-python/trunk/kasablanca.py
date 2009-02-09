@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-
+from PyQt4.QtGui import *
 from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs
 from PyKDE4.kdeui import KApplication, KMainWindow
 
@@ -16,9 +16,15 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		KMainWindow.__init__ (self)
 		self.setupUi(self)
 
-		self.guiSession = GuiSession(self.fileView, self.connectButton, self.siteButton, self.hostEdit, self.userEdit, self.passEdit, self.logEdit, self.tlsCheck)
+		self.guiSession = GuiSession(self.frame, self.fileView, self.connectButton, self.siteButton, self.hostEdit, self.userEdit, self.passEdit, self.logEdit, self.tlsCheck)
 
-		self.guiSession_2 = GuiSession(self.fileView_2, self.connectButton_2, self.siteButton_2, self.hostEdit_2, self.userEdit_2, self.passEdit_2, self.logEdit_2, self.tlsCheck_2)
+		self.guiSession_2 = GuiSession(self.frame_2, self.fileView_2, self.connectButton_2, self.siteButton_2, self.hostEdit_2, self.userEdit_2, self.passEdit_2, self.logEdit_2, self.tlsCheck_2)
+
+		#scene = QGraphicsScene()
+		#scene.addText("Hello, world!")
+		#view = QGraphicsView(scene)
+		#self.gridLayout.addWidget(view)
+		#view.show()
 
 if __name__ == '__main__':
 
@@ -37,7 +43,7 @@ if __name__ == '__main__':
 			
 	KCmdLineArgs.init (sys.argv, aboutData)
 		
-	app = KApplication ()
-	mainWindow = KasablancaMainWindow ()
+	app = KApplication()
+	mainWindow = KasablancaMainWindow()
 	mainWindow.show()
 	app.exec_ ()
