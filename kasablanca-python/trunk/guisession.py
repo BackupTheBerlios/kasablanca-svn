@@ -31,18 +31,10 @@ class GuiSession (QObject):
 		self.connect(self.connectButton, SIGNAL("clicked()"), self.slotClicked)
 		self.connect(self.fileView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
 
-		#customJob = KIO.get(self.kurl, KIO.Reload, KIO.HideProgressInfo)
-		#customJob.addMetaData("kasablanca-cmd", "test")
-		#self.connect(customJob, SIGNAL("data (KIO::Job *, const QByteArray &)"), self.slotData)
-		#self.connect(customJob, SIGNAL("result (KJob *)"), self.slotResult)
-
 		self.connect(self.siteButton, SIGNAL("clicked()"), self.slotSiteClicked)
 
 		self.kurl = KUrl()
 
-		self.progressWidget = ProgressWidget(frame)
-		self.progressWidget.hide()
-	
 	def slotClicked(self):
 
 		kurl = KUrl()
@@ -63,7 +55,6 @@ class GuiSession (QObject):
 		if job.error():
 			KMessageBox.sorry(None, job.errorString())
 
-		self.progressWidget.hide()
 		self.frame.setEnabled(True)
 
 	def slotEntries(self, job, entries):
@@ -154,7 +145,7 @@ class GuiSession (QObject):
 		
 		copyJob = KIO.copy(srcKurl, dstKurl, KIO.HideProgressInfo)
 		self.doJobDefaults(copyJob)
-		self.progressWidget.setPercent(0)
+		self.progressWidget = ProgressWidget(self.frame)
 		self.progressWidget.show()
 
 	def listDir(self, kurl):
