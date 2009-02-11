@@ -6,7 +6,6 @@ from PyQt4.QtGui import *
 from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs
 from PyKDE4.kdeui import KApplication, KMainWindow
 
-from guisession import GuiSession
 from ui_kasablancamainwindow import Ui_KasablancaMainWindow
 
 class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
@@ -16,9 +15,10 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		KMainWindow.__init__ (self)
 		self.setupUi(self)
 
-		self.guiSession = GuiSession(self.frame, self.fileView, self.connectButton, self.siteButton, self.hostEdit, self.userEdit, self.passEdit, self.logEdit, self.tlsCheck)
+		self.frame.init(self.locationBar, self.fileView, self.logEdit, self.siteButton)
+		self.frame_2.init(self.locationBar_2, self.fileView_2, self.logEdit_2, self.siteButton_2)
 
-		self.guiSession_2 = GuiSession(self.frame_2, self.fileView_2, self.connectButton_2, self.siteButton_2, self.hostEdit_2, self.userEdit_2, self.passEdit_2, self.logEdit_2, self.tlsCheck_2)
+		#self.guiSession_2 = GuiSession(self.frame_2, self.fileView_2, self.locationBar_2, self.siteButton_2, self.hostEdit_2, self.userEdit_2, self.passEdit_2, self.logEdit_2, self.tlsCheck_2)
 
 if __name__ == '__main__':
 
