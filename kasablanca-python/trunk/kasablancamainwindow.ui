@@ -43,7 +43,11 @@
         <number>2</number>
        </property>
        <item row="0" column="0" colspan="2" >
-        <widget class="LocationBar" name="locationBar" />
+        <widget class="LocationBar" name="locationBar" >
+         <property name="text" >
+          <string>localhost</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0" colspan="2" >
         <widget class="QPlainTextEdit" name="logEdit" >
@@ -106,16 +110,6 @@
        <property name="spacing" >
         <number>2</number>
        </property>
-       <item row="0" column="0" colspan="2" >
-        <widget class="LocationBar" name="locationBar_2" />
-       </item>
-       <item row="2" column="0" colspan="2" >
-        <widget class="QPlainTextEdit" name="logEdit_2" >
-         <property name="textInteractionFlags" >
-          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0" >
         <spacer name="horizontalSpacer_2" >
          <property name="orientation" >
@@ -128,6 +122,20 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="0" colspan="2" >
+        <widget class="LocationBar" name="locationBar_2" >
+         <property name="text" >
+          <string>ftp.gwdg.de</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2" >
+        <widget class="QPlainTextEdit" name="logEdit_2" >
+         <property name="textInteractionFlags" >
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
        </item>
        <item row="3" column="1" >
         <widget class="QPushButton" name="siteButton_2" >
@@ -150,10 +158,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>locationBar_2</zorder>
-      <zorder>logEdit_2</zorder>
-      <zorder>siteButton_2</zorder>
-      <zorder>fileView_2</zorder>
      </widget>
     </item>
    </layout>

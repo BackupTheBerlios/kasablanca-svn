@@ -19,4 +19,4 @@ class LocationBar (QLineEdit):
 		self.emit(SIGNAL("circleClicked()"))	
 	
 	def resizeEvent(self, event):
-		self.circle.setGeometry(self.width() - 20, self.height()/2 - 6, self.height()/2, self.height()/2)
+		self.circle.setGeometry(self.width() - 19, self.height()/2 - 6, self.height()/2, self.height()/2)
