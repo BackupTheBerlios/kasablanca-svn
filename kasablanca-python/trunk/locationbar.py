@@ -20,3 +20,25 @@ class LocationBar (QLineEdit):
 	
 	def resizeEvent(self, event):
 		self.circle.setGeometry(self.width() - 19, self.height()/2 - 6, self.height()/2, self.height()/2)
+
+	def getUrl(self):
+
+		text = self.text()
+		pos = text.indexOf("/")
+		if pos == -1:
+			return text
+		else:
+			return text.left(pos)
+
+	def setKurl(self, kurl):
+
+		self.setText(kurl.host() + kurl.path())
+
+	def getPath(self):
+
+		text = self.text()
+		pos = text.indexOf("/")
+		if pos == -1:
+			return ""
+		else:
+			return text.right(text.length() - pos)

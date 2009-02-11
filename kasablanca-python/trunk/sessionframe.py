@@ -54,8 +54,11 @@ class SessionFrame (QFrame):
 		kurl.setProtocol("ftps")
 		kurl.setUser(self.settingsWidget.userEdit.text())
 		kurl.setPass(self.settingsWidget.passEdit.text())
-		kurl.setHost(self.locationBar.text())
-		
+		kurl.setHost(self.locationBar.getUrl())
+		kurl.setPort(int(self.settingsWidget.portEdit.text()))
+		kurl.addPath(self.locationBar.getPath())
+		kurl.cleanPath()
+
 		self.attemptKurl = kurl
 
 		# print self.attemptKurl
@@ -91,8 +94,9 @@ class SessionFrame (QFrame):
 
 			self.ftpModel.setData(modelIndex, QVariant(variantList))
 
-		self.kurl = self.attemptKurl;
-	
+		self.kurl = self.attemptKurl
+		self.locationBar.setKurl(self.kurl)
+
 	def slotDoubleClicked(self, index):
 
 		print "doubleClicked"
