@@ -34,7 +34,7 @@ class SessionFrame (QFrame):
 		self.connect(self.locationBar, SIGNAL("returnPressed()"), self.slotReturnPressed)
 		self.connect(self.fileView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
 		self.connect(self.siteButton, SIGNAL("clicked()"), self.slotSiteClicked)
-		self.connect(self.locationBar, SIGNAL("circleClicked()"), self.slotCircleClicked)
+		self.connect(self.locationBar.configureButton, SIGNAL("clicked()"), self.slotConfigureButtonClicked)
 
 		self.kurl = KUrl()
 
@@ -42,7 +42,7 @@ class SessionFrame (QFrame):
 
 		self.emit(SIGNAL("sizeChanged(int, int)"), self.width(), self.height())
 
-	def slotCircleClicked(self):
+	def slotConfigureButtonClicked(self):
 		if self.settingsWidget.isHidden():
 			self.settingsWidget.show()
 		else:

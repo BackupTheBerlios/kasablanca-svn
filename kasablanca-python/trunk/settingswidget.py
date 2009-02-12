@@ -15,7 +15,7 @@ class SettingsWidget (SvgWidget, Ui_SettingsWidget):
 		SvgWidget.__init__ (self, parent)
 		self.setupUi(self)
 
-		self.containerOpacity = 0.5
+		self.containerOpacity = 0.75
 		self.load(QByteArray(self.xmlString()))
 
 	def slotSizeChanged(self, width, height):
@@ -28,7 +28,7 @@ class SettingsWidget (SvgWidget, Ui_SettingsWidget):
 		xml = '<?xml version="1.0" standalone="no"?>'
 		xml += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
 		xml += '<svg viewBox = "0 0 525 150" version = "1.1">'
-		xml += '<rect id="container" x = "0" y = "0" width = "525" height = "150" rx = "10" ry = "10" fill = "grey" fill-opacity = "' + str(self.containerOpacity) + '"/>'
+		xml += '<rect id="container" x = "0" y = "0" width = "525" height = "150" rx = "10" ry = "10" fill = "lightgray" fill-opacity = "' + str(self.containerOpacity) + '"/>'
 		xml += '</svg>'
 
 		return xml

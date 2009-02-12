@@ -5,21 +5,17 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 
-from circlebutton import CircleButton
+from iconbutton import IconButton
 
 class LocationBar (QLineEdit):
 
 	def __init__ (self, parent):
 		
 		QLineEdit.__init__ (self, parent)
-		self.circle = CircleButton(self)
-		self.connect(self.circle, SIGNAL("clicked()"), self.slotCircleClicked)
-
-	def slotCircleClicked(self): 
-		self.emit(SIGNAL("circleClicked()"))	
+		self.configureButton = IconButton("configure", self)	
 	
 	def resizeEvent(self, event):
-		self.circle.setGeometry(self.width() - 19, self.height()/2 - 6, self.height()/2, self.height()/2)
+		self.configureButton.setGeometry(self.width() - 19, self.height()/2 - 6, self.height()/2, self.height()/2)
 
 	def getUrl(self):
 
