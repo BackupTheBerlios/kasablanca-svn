@@ -6,16 +6,32 @@ from PyQt4.QtGui import *
 from PyQt4.QtSvg import *
 
 from iconbutton import IconButton
+from circlebutton import CircleButton
 
 class LocationBar (QLineEdit):
 
 	def __init__ (self, parent):
 		
 		QLineEdit.__init__ (self, parent)
-		self.configureButton = IconButton("configure", self)	
+		#self.configureButton = IconButton("configure", self)	
+		self.configureButton = CircleButton(self)
+
+		#self.returnButton = IconButton("go-jump-locationbar", self)
 	
+		self.normalColor = self.palette().color(QPalette.Text)
+		self.brightColor = self.normalColor.lighter(500)
+
+		self.currentUrl = ""
+
+		self.connect(self, SIGNAL("textChanged(const QString&)"), self.slotTextChanged)
+
 	def resizeEvent(self, event):
-		self.configureButton.setGeometry(self.width() - 19, self.height()/2 - 6, self.height()/2, self.height()/2)
+		self.configureButton.setGeometry(self.width() - self.height()/4*3, self.height()/4, self.height()/2, self.height()/2)
+		#self.returnButton.setGeometry(self.width() - self.height()/4*3 - self.height()/2, self.height()/4, self.height()/2, self.height()/2)
+
+	def slotTextChanged(self, text):
+
+		self.setBrightText(text != self.currentUrl)
 
 	def getUrl(self):
 
@@ -28,7 +44,21 @@ class LocationBar (QLineEdit):
 
 	def setKurl(self, kurl):
 
-		self.setText(kurl.host() + kurl.path())
+		self.currentUrl = kurl.host() + kurl.path()
+		self.setText(self.currentUrl)
+
+		self.setBrightText(False)
+
+	def setBrightText(self, bright):
+
+		palette = QPalette()
+
+		if bright == True:
+			palette.setColor(QPalette.Text, self.brightColor)
+		else:
+			palette.setColor(QPalette.Text, self.normalColor)
+
+		self.setPalette(palette)
 
 	def getPath(self):
 
