@@ -27,6 +27,49 @@ class DirModel (QAbstractItemModel):
 	def rowCount(self, index = QModelIndex()):
 		return len(self.list)
 
+	def sort(self, column, order):
+
+		reverse = (order == Qt.DescendingOrder)
+
+		if (column == self.FILENAME):
+			self.list.sort(cmp = self.compareNames, reverse = reverse)
+		elif (column == self.USER):
+			self.list.sort(cmp = self.compareUsers, reverse = reverse)
+		elif (column == self.GROUP):
+			self.list.sort(cmp = self.compareGroups, reverse = reverse)
+		elif (column == self.SIZE):
+			self.list.sort(cmp = self.compareSizes, reverse = reverse)
+
+		self.emit(SIGNAL('layoutChanged()'))
+	
+	def compare(self, column, x, y):
+
+		if column == self.SIZE:
+			xx = x.toList()[column].toLongLong()
+			yy = y.toList()[column].toLongLong()
+		else:
+			xx = x.toList()[column].toString()
+			yy = y.toList()[column].toString()
+
+		if xx > yy:
+			return 1
+		elif xx == yy:
+			return 0
+		else:
+			return -1
+
+	def compareUsers(self, x, y):
+		return self.compare(self.USER, x, y)
+
+	def compareNames(self, x, y):
+		return self.compare(self.FILENAME, x, y)
+
+	def compareGroups(self, x, y):
+		return self.compare(self.GROUP, x, y)
+
+	def compareSizes(self, x, y):
+		return self.compare(self.SIZE, x, y)
+
 	def parent(self, child):
 
 		return QModelIndex()

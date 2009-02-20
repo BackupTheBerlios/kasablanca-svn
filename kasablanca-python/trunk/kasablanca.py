@@ -16,8 +16,8 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		KMainWindow.__init__ (self)
 		self.setupUi(self)
 
-		self.session = Session(self.frame, self.locationBar, self.fileView, self.logEdit, self.siteButton)
-		self.session_2 = Session(self.frame_2, self.locationBar_2, self.fileView_2, self.logEdit_2, self.siteButton_2)
+		self.session = Session(self.frame, self.locationBar, self.dirView, self.logEdit, self.siteButton)
+		self.session_2 = Session(self.frame_2, self.locationBar_2, self.dirView_2, self.logEdit_2, self.siteButton_2)
 
 if __name__ == '__main__':
 

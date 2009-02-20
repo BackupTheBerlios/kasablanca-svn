@@ -77,12 +77,15 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2" >
-        <widget class="QTreeView" name="fileView" >
+        <widget class="QTreeView" name="dirView" >
          <property name="rootIsDecorated" >
           <bool>false</bool>
          </property>
          <property name="itemsExpandable" >
           <bool>false</bool>
+         </property>
+         <property name="sortingEnabled" >
+          <bool>true</bool>
          </property>
          <property name="expandsOnDoubleClick" >
           <bool>false</bool>
@@ -145,12 +148,15 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2" >
-        <widget class="QTreeView" name="fileView_2" >
+        <widget class="QTreeView" name="dirView_2" >
          <property name="rootIsDecorated" >
           <bool>false</bool>
          </property>
          <property name="itemsExpandable" >
           <bool>false</bool>
+         </property>
+         <property name="sortingEnabled" >
+          <bool>true</bool>
          </property>
          <property name="expandsOnDoubleClick" >
           <bool>false</bool>

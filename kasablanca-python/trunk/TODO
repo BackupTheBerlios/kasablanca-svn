@@ -1,2 +1,5 @@
-- progress while loading dirs (for ftp aswell?)
-- adjust color of svg widgets to theme.
+[ ] adjust color of svg widgets to theme.
+[x] implement sorting.
+[x] get rid of the single dots.
+[ ] put ".." always into 1st line.
+[ ] add date column.

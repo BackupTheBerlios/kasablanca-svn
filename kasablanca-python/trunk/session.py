@@ -14,10 +14,10 @@ from settingswidget import SettingsWidget
 
 class Session (QObject):
 
-	def __init__(self, frame, locationBar, fileView, logEdit, siteButton):
+	def __init__(self, frame, locationBar, dirView, logEdit, siteButton):
 		
 		self.frame = frame
-		self.fileView = fileView
+		self.dirView = dirView
 		self.locationBar = locationBar
 		self.logEdit = logEdit
 		self.siteButton = siteButton
@@ -26,10 +26,14 @@ class Session (QObject):
 		self.settingsWidget.setVisible(False)
 
 		self.ftpModel = DirModel()
-		self.fileView.setModel(self.ftpModel)
+		self.dirView.setModel(self.ftpModel)
+
+		# enable sorting
+
+		self.connect(self.dirView.header(), SIGNAL("sectionClicked(int)"), self.dirView.sortByColumn)
 
 		self.connect(self.locationBar, SIGNAL("returnPressed()"), self.slotReturnPressed)
-		self.connect(self.fileView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
+		self.connect(self.dirView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
 		self.connect(self.siteButton, SIGNAL("clicked()"), self.slotSiteClicked)
 		self.connect(self.locationBar.configureButton, SIGNAL("clicked()"), self.slotConfigureButtonClicked)
 
@@ -88,7 +92,8 @@ class Session (QObject):
 
 			modelIndex = self.ftpModel.createIndex(self.ftpModel.rowCount(), 0)
 
-			self.ftpModel.setData(modelIndex, QVariant(variantList))
+			if (entry.stringValue(KIO.UDSEntry.UDS_NAME) != "."):
+				self.ftpModel.setData(modelIndex, QVariant(variantList))
 
 		self.kurl = self.attemptKurl
 		self.locationBar.setKurl(self.kurl)
@@ -111,6 +116,7 @@ class Session (QObject):
 	
 			self.listDir(self.attemptKurl)
 		else:
+		
 			filePath = KFileDialog.getSaveFileName(KUrl(QDir.homePath() + "/" + fileName))
 
 			if filePath != "":
@@ -149,8 +155,7 @@ class Session (QObject):
 			job.addMetaData("kasablanca-tls", "false")
 			job.addMetaData("kasablanca-tls-data", "false")
 		self.connect(job, SIGNAL("result (KJob *)"), self.slotResult)
-		self.connect(job, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage)
-		self.connect(job, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)  
+		self.connect(job, SIGNAL("infoMessage(KJob*, const QString&, const QString&)"), self.slotInfoMessage) 
 
 		self.frame.setEnabled(False)
 
@@ -158,6 +163,7 @@ class Session (QObject):
 		
 		copyJob = KIO.copy(srcKurl, dstKurl, KIO.HideProgressInfo)
 		self.doJobDefaults(copyJob)
+		self.connect(copyJob, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)
 		self.progressWidget = ProgressWidget(self)
 		self.progressWidget.show()
 
