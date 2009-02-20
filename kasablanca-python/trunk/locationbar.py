@@ -33,11 +33,15 @@ class LocationBar (QLineEdit):
 
 		self.setBrightText(text != self.currentUrl)
 
-	def getUrl(self):
+	def getUrlString(self):
+
+		# a string beginning with / indicates a local directory
 
 		text = self.text()
 		pos = text.indexOf("/")
-		if pos == -1:
+		if pos == 0: 
+			return None;
+		elif pos == -1:
 			return text
 		else:
 			return text.left(pos)
@@ -60,11 +64,13 @@ class LocationBar (QLineEdit):
 
 		self.setPalette(palette)
 
-	def getPath(self):
+	def getPathString(self):
 
 		text = self.text()
 		pos = text.indexOf("/")
-		if pos == -1:
+		if pos == 0:
+			return text;
+		elif pos == -1:
 			return ""
 		else:
 			return text.right(text.length() - pos)

@@ -4,7 +4,7 @@
 from PyKDE4.kdeui import KIconLoader
 from PyQt4.QtCore import *
 
-class FtpDirModel (QAbstractItemModel):
+class DirModel (QAbstractItemModel):
 
 	FILENAME, USER, GROUP, SIZE, DIRECTORY, LINK = range(6)
 
