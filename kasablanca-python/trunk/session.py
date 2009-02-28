@@ -15,7 +15,7 @@ from settingswidget import SettingsWidget
 class Session (QObject):
 
 	def __init__(self, frame, locationBar, dirView, logEdit, siteButton):
-		
+
 		self.frame = frame
 		self.dirView = dirView
 		self.locationBar = locationBar
@@ -31,6 +31,10 @@ class Session (QObject):
 		# enable sorting
 
 		self.connect(self.dirView.header(), SIGNAL("sectionClicked(int)"), self.dirView.sortByColumn)
+
+		# set filename & ascending to default
+
+		self.dirView.header().setSortIndicator(DirModel.FILENAME, Qt.AscendingOrder)
 
 		self.connect(self.locationBar, SIGNAL("returnPressed()"), self.slotReturnPressed)
 		self.connect(self.dirView, SIGNAL("doubleClicked(const QModelIndex&)"), self.slotDoubleClicked)
@@ -94,6 +98,8 @@ class Session (QObject):
 
 			if (entry.stringValue(KIO.UDSEntry.UDS_NAME) != "."):
 				self.ftpModel.setData(modelIndex, QVariant(variantList))
+
+		self.dirView.sortByColumn(self.dirView.header().sortIndicatorSection(), self.dirView.header().sortIndicatorOrder())
 
 		self.kurl = self.attemptKurl
 		self.locationBar.setKurl(self.kurl)

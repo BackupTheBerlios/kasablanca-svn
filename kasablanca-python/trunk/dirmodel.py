@@ -25,7 +25,7 @@ class DirModel (QAbstractItemModel):
 		return self.createIndex(row, column)
 
 	def rowCount(self, index = QModelIndex()):
-		return len(self.list)
+		return len(self.list) 
 
 	def sort(self, column, order):
 
@@ -40,7 +40,7 @@ class DirModel (QAbstractItemModel):
 		elif (column == self.SIZE):
 			self.list.sort(cmp = self.compareSizes, reverse = reverse)
 
-		self.emit(SIGNAL('layoutChanged()'))
+		self.emit(SIGNAL("layoutChanged()"))
 	
 	def compare(self, column, x, y):
 

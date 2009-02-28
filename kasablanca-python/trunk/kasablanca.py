@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs
 from PyKDE4.kdeui import KApplication, KMainWindow
@@ -18,6 +19,11 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 
 		self.session = Session(self.frame, self.locationBar, self.dirView, self.logEdit, self.siteButton)
 		self.session_2 = Session(self.frame_2, self.locationBar_2, self.dirView_2, self.logEdit_2, self.siteButton_2)
+
+		QObject.connect(self.session, SIGNAL("transfer(PyQt_PyObject)"), self.transfer)
+
+	def transfer(self, session):
+		print "test"
 
 if __name__ == '__main__':
 
