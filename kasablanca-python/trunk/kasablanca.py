@@ -4,7 +4,7 @@
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs
+from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs, KUrl
 from PyKDE4.kdeui import KApplication, KMainWindow
 
 from session import Session
@@ -20,10 +20,23 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		self.session = Session(self.frame, self.locationBar, self.dirView, self.logEdit, self.siteButton)
 		self.session_2 = Session(self.frame_2, self.locationBar_2, self.dirView_2, self.logEdit_2, self.siteButton_2)
 
-		QObject.connect(self.session, SIGNAL("transfer(PyQt_PyObject)"), self.transfer)
+		self.connect(self.session, SIGNAL("transfer(PyQt_PyObject, QString)"), self.transfer)
+		self.connect(self.session_2, SIGNAL("transfer(PyQt_PyObject, QString)"), self.transfer)
 
-	def transfer(self, session):
-		print "test"
+	def transfer(self, session, fileName):
+	
+		srcSession = (self.session, self.session_2)[session != self.session]
+		dstSession = (self.session_2, self.session)[session != self.session]
+
+		srcKurl = KUrl(srcSession.kurl)
+		srcKurl.addPath(fileName)
+
+		dstKurl = KUrl(dstSession.kurl)
+		dstKurl.addPath(fileName)
+
+		print "transfer " + srcKurl.prettyUrl() + " to " + dstKurl.prettyUrl()
+
+		session.copyFile(srcKurl, dstKurl)
 
 if __name__ == '__main__':
 

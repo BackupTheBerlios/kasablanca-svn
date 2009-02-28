@@ -16,6 +16,8 @@ class Session (QObject):
 
 	def __init__(self, frame, locationBar, dirView, logEdit, siteButton):
 
+		QObject.__init__(self)
+
 		self.frame = frame
 		self.dirView = dirView
 		self.locationBar = locationBar
@@ -41,7 +43,14 @@ class Session (QObject):
 		self.connect(self.siteButton, SIGNAL("clicked()"), self.slotSiteClicked)
 		self.connect(self.locationBar.configureButton, SIGNAL("clicked()"), self.slotConfigureButtonClicked)
 
-		self.kurl = KUrl()
+		# default to home directory
+
+		kurl = KUrl()
+		kurl.setProtocol("file");
+		kurl.setPath(QDir.homePath());
+		self.listDir(kurl);
+
+		self.kurl = kurl;
 
 	def slotConfigureButtonClicked(self):
 		if self.settingsWidget.isHidden():
@@ -122,13 +131,8 @@ class Session (QObject):
 	
 			self.listDir(self.attemptKurl)
 		else:
-		
-			filePath = KFileDialog.getSaveFileName(KUrl(QDir.homePath() + "/" + fileName))
 
-			if filePath != "":
-				srcKurl = KUrl(self.kurl)
-				srcKurl.addPath(fileName)
-				self.copyFile(srcKurl, KUrl(filePath))
+			self.emit(SIGNAL("transfer(PyQt_PyObject, QString)"), self, fileName)
 
 	def slotSiteClicked(self):
 		
@@ -170,7 +174,7 @@ class Session (QObject):
 		copyJob = KIO.copy(srcKurl, dstKurl, KIO.HideProgressInfo)
 		self.doJobDefaults(copyJob)
 		self.connect(copyJob, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)
-		self.progressWidget = ProgressWidget(self)
+		self.progressWidget = ProgressWidget(self.frame)
 		self.progressWidget.show()
 
 	def listDir(self, kurl):
