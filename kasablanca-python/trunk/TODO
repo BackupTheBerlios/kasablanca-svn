@@ -3,3 +3,5 @@
 [x] get rid of the single dots.
 [ ] put ".." always into 1st line.
 [ ] add date column.
+[ ] put user & pass data into settingswidget (when you entered them via kio).
+[ ] dbl click work for single files, drag and drop works for more files and directories.

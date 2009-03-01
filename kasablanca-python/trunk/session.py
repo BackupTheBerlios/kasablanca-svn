@@ -48,9 +48,9 @@ class Session (QObject):
 		kurl = KUrl()
 		kurl.setProtocol("file");
 		kurl.setPath(QDir.homePath());
-		self.listDir(kurl);
-
-		self.kurl = kurl;
+		
+		self.attemptKurl = kurl;
+		self.listDir(self.attemptKurl);
 
 	def slotConfigureButtonClicked(self):
 		if self.settingsWidget.isHidden():
@@ -83,6 +83,8 @@ class Session (QObject):
 		print "result"
 		if job.error():
 			KMessageBox.sorry(None, job.errorString())
+			if self.progressWidget.isVisible():
+				self.progressWidget.hide()
 
 		self.frame.setEnabled(True)
 
