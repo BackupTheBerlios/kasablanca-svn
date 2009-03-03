@@ -27,8 +27,11 @@ class Session (QObject):
 		self.settingsWidget = SettingsWidget(self.frame)
 		self.settingsWidget.setVisible(False)
 
-		self.ftpModel = DirModel()
-		self.dirView.setModel(self.ftpModel)
+		self.progressWidget = ProgressWidget(self.frame)
+		self.progressWidget.setVisible(False)
+
+		self.dirModel = DirModel()
+		self.dirView.setModel(self.dirModel)
 
 		# enable sorting
 
@@ -51,6 +54,15 @@ class Session (QObject):
 		
 		self.attemptKurl = kurl;
 		self.listDir(self.attemptKurl);
+
+		self.connect(self.dirModel, SIGNAL("drop(PyQt_PyObject)"), self.slotDrop)
+
+	def slotDrop(self, dirModel):
+
+		if dirModel == self.dirModel:
+			print "self drop"
+		else:
+			print "other drop"
 
 	def slotConfigureButtonClicked(self):
 		if self.settingsWidget.isHidden():
@@ -92,7 +104,7 @@ class Session (QObject):
 
 		print "entries"
 
-		self.ftpModel.list = []
+		self.dirModel.list = []
 
 		for entry in entries:
 
@@ -105,10 +117,10 @@ class Session (QObject):
 				entry.isLink()
 			]
 
-			modelIndex = self.ftpModel.createIndex(self.ftpModel.rowCount(), 0)
+			modelIndex = self.dirModel.createIndex(self.dirModel.rowCount(), 0)
 
 			if (entry.stringValue(KIO.UDSEntry.UDS_NAME) != "."):
-				self.ftpModel.setData(modelIndex, QVariant(variantList))
+				self.dirModel.setData(modelIndex, QVariant(variantList))
 
 		self.dirView.sortByColumn(self.dirView.header().sortIndicatorSection(), self.dirView.header().sortIndicatorOrder())
 
@@ -119,9 +131,9 @@ class Session (QObject):
 
 		print "doubleClicked"
 
-		fileName = self.ftpModel.getField(index.row(), DirModel.FILENAME)
+		fileName = self.dirModel.getField(index.row(), DirModel.FILENAME)
 
-		if self.ftpModel.getField(index.row(), DirModel.DIRECTORY) == True:
+		if self.dirModel.getField(index.row(), DirModel.DIRECTORY) == True:
 
 			# attempt to change the dir
 
@@ -175,8 +187,7 @@ class Session (QObject):
 		
 		copyJob = KIO.copy(srcKurl, dstKurl, KIO.HideProgressInfo)
 		self.doJobDefaults(copyJob)
-		self.connect(copyJob, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)
-		self.progressWidget = ProgressWidget(self.frame)
+		self.connect(copyJob, SIGNAL("percent(KJob*, unsigned long)"), self.slotPercent)	
 		self.progressWidget.show()
 
 	def listDir(self, kurl):

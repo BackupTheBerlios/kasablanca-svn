@@ -52,7 +52,7 @@
        <item row="2" column="0" colspan="2" >
         <widget class="QPlainTextEdit" name="logEdit" >
          <property name="textInteractionFlags" >
-          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+          <set>Qt::NoTextInteraction</set>
          </property>
         </widget>
        </item>
@@ -77,7 +77,16 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2" >
-        <widget class="QTreeView" name="dirView" >
+        <widget class="DirView" name="dirView" >
+         <property name="dragEnabled" >
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode" >
+          <enum>QAbstractItemView::DragDrop</enum>
+         </property>
+         <property name="selectionMode" >
+          <enum>QAbstractItemView::ContiguousSelection</enum>
+         </property>
          <property name="rootIsDecorated" >
           <bool>false</bool>
          </property>
@@ -136,7 +145,7 @@
        <item row="2" column="0" colspan="2" >
         <widget class="QPlainTextEdit" name="logEdit_2" >
          <property name="textInteractionFlags" >
-          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+          <set>Qt::NoTextInteraction</set>
          </property>
         </widget>
        </item>
@@ -148,9 +157,18 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2" >
-        <widget class="QTreeView" name="dirView_2" >
+        <widget class="DirView" name="dirView_2" >
+         <property name="dragEnabled" >
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode" >
+          <enum>QAbstractItemView::DragDrop</enum>
+         </property>
          <property name="alternatingRowColors" >
           <bool>false</bool>
+         </property>
+         <property name="selectionMode" >
+          <enum>QAbstractItemView::ContiguousSelection</enum>
          </property>
          <property name="rootIsDecorated" >
           <bool>false</bool>
@@ -184,6 +202,11 @@
    <class>LocationBar</class>
    <extends>QLineEdit</extends>
    <header>locationbar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DirView</class>
+   <extends>QTreeView</extends>
+   <header>dirview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

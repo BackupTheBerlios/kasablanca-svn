@@ -20,10 +20,10 @@ class KasablancaMainWindow (KMainWindow, Ui_KasablancaMainWindow):
 		self.session = Session(self.frame, self.locationBar, self.dirView, self.logEdit, self.siteButton)
 		self.session_2 = Session(self.frame_2, self.locationBar_2, self.dirView_2, self.logEdit_2, self.siteButton_2)
 
-		self.connect(self.session, SIGNAL("transfer(PyQt_PyObject, QString)"), self.transfer)
-		self.connect(self.session_2, SIGNAL("transfer(PyQt_PyObject, QString)"), self.transfer)
+		self.connect(self.session, SIGNAL("transfer(PyQt_PyObject, QString)"), self.slotTransfer)
+		self.connect(self.session_2, SIGNAL("transfer(PyQt_PyObject, QString)"), self.slotTransfer)
 
-	def transfer(self, session, fileName):
+	def slotTransfer(self, session, fileName):
 	
 		srcSession = (self.session, self.session_2)[session != self.session]
 		dstSession = (self.session_2, self.session)[session != self.session]

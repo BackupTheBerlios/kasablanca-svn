@@ -27,6 +27,42 @@ class DirModel (QAbstractItemModel):
 	def rowCount(self, index = QModelIndex()):
 		return len(self.list) 
 
+	def supportedDropActions(self):
+
+		return Qt.CopyAction
+
+	def flags(self, index):
+ 
+		defaultFlags = QAbstractItemModel.flags(self, index)
+
+		if index.isValid():
+			return Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled | defaultFlags
+		else:
+			return Qt.ItemIsDropEnabled | defaultFlags
+
+	def mimeTypes(self):
+
+		mimeTypeList = list();
+		mimeTypeList.append(QString("application/vnd.text.list"))
+		return mimeTypeList;
+
+	def mimeData(self, indexes):
+
+		mimeData = QMimeData()
+		encodedData = QByteArray()
+		stream = QDataStream(encodedData, QIODevice.WriteOnly)
+
+		for index in indexes:
+		
+			if index.isValid():
+
+				entry =  self.list[index.row()].toList()[index.column()].toString()
+				stream << entry
+
+		mimeData.setData("application/vnd.text.list", encodedData)
+
+		return mimeData
+
 	def sort(self, column, order):
 
 		reverse = (order == Qt.DescendingOrder)
