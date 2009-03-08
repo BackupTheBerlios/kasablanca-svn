@@ -46,6 +46,10 @@ class Session (QObject):
 		self.connect(self.siteButton, SIGNAL("clicked()"), self.slotSiteClicked)
 		self.connect(self.locationBar.configureButton, SIGNAL("clicked()"), self.slotConfigureButtonClicked)
 
+		# connect drop signal
+
+		self.connect(self.dirView, SIGNAL("drop(QByteArray*)"), self.slotDrop)
+
 		# default to home directory
 
 		kurl = KUrl()
@@ -55,14 +59,23 @@ class Session (QObject):
 		self.attemptKurl = kurl;
 		self.listDir(self.attemptKurl);
 
-		self.connect(self.dirModel, SIGNAL("drop(PyQt_PyObject)"), self.slotDrop)
+	def slotDrop(self, encodedData):
+		
+		stream = QDataStream(encodedData, QIODevice.ReadOnly)
 
-	def slotDrop(self, dirModel):
+		fileInfoList = list()
 
-		if dirModel == self.dirModel:
-			print "self drop"
-		else:
-			print "other drop"
+		while stream.atEnd() == False:
+
+			fileInfos = QVariant()
+			stream >> fileInfos
+			fileInfoList.append(fileInfos)
+
+		self.emit(SIGNAL("transfer(PyQt_PyObject, QString)"), self, fileInfoList[0].toList()[DirModel.FILENAME].toString())
+
+		# TODO: queue rest
+
+		#print "filename: " + fileInfos.toList()[DirModel.FILENAME].toString() + " directory: " + str(fileInfos.toList()[DirModel.DIRECTORY].toBool()) + " link: " + str(fileInfos.toList()[DirModel.LINK].toBool())
 
 	def slotConfigureButtonClicked(self):
 		if self.settingsWidget.isHidden():
@@ -107,6 +120,8 @@ class Session (QObject):
 		self.dirModel.list = []
 
 		for entry in entries:
+
+			# the last to entries do not appear as columns in dirview
 
 			variantList = [
 				entry.stringValue(KIO.UDSEntry.UDS_NAME),

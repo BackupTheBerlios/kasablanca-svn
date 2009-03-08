@@ -12,10 +12,21 @@ class DirView (QTreeView):
 
 	def dropEvent (self, event):
 
+		if event.source() == self:
+			return
+
 		encodedData = event.encodedData("application/vnd.text.list")
-		stream = QDataStream(encodedData, QIODevice.ReadOnly)
+		#stream = QDataStream(encodedData, QIODevice.ReadOnly)
 		
-		while stream.atEnd() == False:
-			text = QString()
-			stream >> text
-			print "drop: " + text
+		#while stream.atEnd() == False:
+			#text = QString()
+			#stream >> text
+			#print "drop: " + text
+
+		#dirModel = self.model()
+
+		self.emit(SIGNAL("drop(QByteArray*)"), encodedData)
+
+
+
+

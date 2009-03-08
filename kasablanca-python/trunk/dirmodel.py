@@ -54,10 +54,13 @@ class DirModel (QAbstractItemModel):
 
 		for index in indexes:
 		
-			if index.isValid():
+			if index.isValid() and index.column() == self.FILENAME:
 
-				entry =  self.list[index.row()].toList()[index.column()].toString()
-				stream << entry
+				stream << self.list[index.row()]
+
+				#stream << self.list[index.row()].toList()[self.FILENAME]
+				#stream << self.list[index.row()].toList()[self.DIRECTORY]
+				#stream << self.list[index.row()].toList()[self.LINK]
 
 		mimeData.setData("application/vnd.text.list", encodedData)
 
