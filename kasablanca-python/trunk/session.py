@@ -71,7 +71,7 @@ class Session (QObject):
 			stream >> fileInfos
 			fileInfoList.append(fileInfos)
 
-		self.emit(SIGNAL("transfer(PyQt_PyObject, QString)"), self, fileInfoList[0].toList()[DirModel.FILENAME].toString())
+		self.emit(SIGNAL("transfer(PyQt_PyObject, QString, bool)"), self, fileInfoList[0].toList()[DirModel.FILENAME].toString(), False)
 
 		# TODO: queue rest
 
@@ -161,7 +161,7 @@ class Session (QObject):
 			self.listDir(self.attemptKurl)
 		else:
 
-			self.emit(SIGNAL("transfer(PyQt_PyObject, QString)"), self, fileName)
+			self.emit(SIGNAL("transfer(PyQt_PyObject, QString, bool)"), self, fileName, True)
 
 	def slotSiteClicked(self):
 		
